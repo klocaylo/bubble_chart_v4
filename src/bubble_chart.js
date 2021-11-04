@@ -11,25 +11,25 @@ function bubbleChart() {
   var width = 940;
   var height = 600;
 
-  // tooltip for mouseover functionality
-  var tooltip = floatingTooltip('gates_tooltip', 240);
+  // // tooltip for mouseover functionality
+  // var tooltip = floatingTooltip('gates_tooltip', 240);
 
   // Locations to move bubbles towards, depending
   // on which view mode is selected.
   var center = { x: width / 2, y: height / 2 };
 
-  var yearCenters = {
-    2008: { x: width / 3, y: height / 2 },
-    2009: { x: width / 2, y: height / 2 },
-    2010: { x: 2 * width / 3, y: height / 2 }
-  };
+  // var yearCenters = {
+  //   2008: { x: width / 3, y: height / 2 },
+  //   2009: { x: width / 2, y: height / 2 },
+  //   2010: { x: 2 * width / 3, y: height / 2 }
+  // };
 
-  // X locations of the year titles.
-  var yearsTitleX = {
-    2008: 160,
-    2009: width / 2,
-    2010: width - 160
-  };
+  // // X locations of the year titles.
+  // var yearsTitleX = {
+  //   2008: 160,
+  //   2009: width / 2,
+  //   2010: width - 160
+  // };
 
   // @v4 strength to apply to the position forces
   var forceStrength = 0.03;
@@ -74,9 +74,24 @@ function bubbleChart() {
   // Nice looking colors - no reason to buck the trend
   // @v4 scales now have a flattened naming scheme
   var fillColor = d3.scaleOrdinal()
-    .domain(['low', 'medium', 'high'])
-    .range(['#d84b2a', '#beccae', '#7aa25c']);
-
+    .domain(['Belk College of Business', 
+      'College of Arts + Architecture', 
+      'College of Computing & Informatics',
+      'College of Education',
+      'College of Health & Human Services',
+      'College of Liberal Arts & Sciences',
+      'Lee College of Engineering',
+      'School of Data Science (SDS)'
+    ])
+    .range(['#f1da14', 
+      '#3ab988', 
+      '#b8e04a',
+      '#8cd646',
+      '#2c909a',
+      '#426697',
+      '#523983',
+      '#c71575'
+    ])
 
   /*
    * This data manipulation function takes the raw data from
@@ -91,16 +106,12 @@ function bubbleChart() {
    * array for each element in the rawData input.
    */
   function createNodes(rawData) {
-    // Use the max total_amount in the data as the max in the scale's domain
-    // note we have to ensure the total_amount is a number.
-    var maxAmount = d3.max(rawData, function (d) { return +d.total_amount; });
-
     // Sizes bubbles based on area.
     // @v4: new flattened scale names.
     var radiusScale = d3.scalePow()
       .exponent(0.5)
-      .range([2, 85])
-      .domain([0, maxAmount]);
+      .domain([1, 300])
+      .range([5, 50]);
 
     // Use map() to convert raw data into node data.
     // Checkout http://learnjsdata.com/ for more on
@@ -108,19 +119,19 @@ function bubbleChart() {
     var myNodes = rawData.map(function (d) {
       return {
         id: d.id,
-        radius: radiusScale(+d.total_amount),
-        value: +d.total_amount,
-        name: d.grant_title,
-        org: d.organization,
-        group: d.group,
-        year: d.start_year,
+        radius: radiusScale(+d.count),
+        value: +d.count,
+        name: d.topic,
+        college: d.college,
+        //Math.random() places the bubbles on different spots in the SVG.
+        //Without this, the bubbles would be sorted from biggest to smallest.
         x: Math.random() * 900,
         y: Math.random() * 800
       };
     });
 
     // sort them to prevent occlusion of smaller nodes.
-    myNodes.sort(function (a, b) { return b.value - a.value; });
+    //myNodes.sort(function (a, b) { return b.value - a.value; });
 
     return myNodes;
   }
@@ -161,20 +172,24 @@ function bubbleChart() {
     var bubblesE = bubbles.enter().append('circle')
       .classed('bubble', true)
       .attr('r', 0)
-      .attr('fill', function (d) { return fillColor(d.group); })
-      .attr('stroke', function (d) { return d3.rgb(fillColor(d.group)).darker(); })
+      .attr('fill', function (d) { 
+        return fillColor(d.college)
+      })
+      .attr('stroke', "#181818")
       .attr('stroke-width', 2)
       .on('mouseover', showDetail)
       .on('mouseout', hideDetail);
 
     // @v4 Merge the original empty selection and the enter selection
-    bubbles = bubbles.merge(bubblesE);
+    bubbles = bubbles.merge(bubblesE)
 
     // Fancy transition to make bubbles appear, ending with the
     // correct radius
     bubbles.transition()
       .duration(2000)
-      .attr('r', function (d) { return d.radius; });
+      .attr('r', function (d) { 
+        return d.radius
+      })
 
     // Set the simulation's nodes to our newly created nodes array.
     // @v4 Once we set the nodes, the simulation will start running automatically!
@@ -193,17 +208,21 @@ function bubbleChart() {
    */
   function ticked() {
     bubbles
-      .attr('cx', function (d) { return d.x; })
-      .attr('cy', function (d) { return d.y; });
+      .attr('cx', function (d) { 
+        return d.x
+      })
+      .attr('cy', function (d) { 
+        return d.y
+      })
   }
 
-  /*
-   * Provides a x value for each node to be used with the split by year
-   * x force.
-   */
-  function nodeYearPos(d) {
-    return yearCenters[d.year].x;
-  }
+  // /*
+  //  * Provides a x value for each node to be used with the split by year
+  //  * x force.
+  //  */
+  // function nodeYearPos(d) {
+  //   return yearCenters[d.year].x;
+  // }
 
 
   /*
@@ -213,7 +232,7 @@ function bubbleChart() {
    * center of the visualization.
    */
   function groupBubbles() {
-    hideYearTitles();
+    //hideYearTitles();
 
     // @v4 Reset the 'x' force to draw the bubbles to the center.
     simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
@@ -223,46 +242,46 @@ function bubbleChart() {
   }
 
 
-  /*
-   * Sets visualization in "split by year mode".
-   * The year labels are shown and the force layout
-   * tick function is set to move nodes to the
-   * yearCenter of their data's year.
-   */
-  function splitBubbles() {
-    showYearTitles();
+  // /*
+  //  * Sets visualization in "split by year mode".
+  //  * The year labels are shown and the force layout
+  //  * tick function is set to move nodes to the
+  //  * yearCenter of their data's year.
+  //  */
+  // function splitBubbles() {
+  //   showYearTitles();
 
-    // @v4 Reset the 'x' force to draw the bubbles to their year centers
-    simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
+  //   // @v4 Reset the 'x' force to draw the bubbles to their year centers
+  //   simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
 
-    // @v4 We can reset the alpha value and restart the simulation
-    simulation.alpha(1).restart();
-  }
+  //   // @v4 We can reset the alpha value and restart the simulation
+  //   simulation.alpha(1).restart();
+  // }
 
   /*
    * Hides Year title displays.
    */
   function hideYearTitles() {
-    svg.selectAll('.year').remove();
+    svg.selectAll('.college').remove();
   }
 
-  /*
-   * Shows Year title displays.
-   */
-  function showYearTitles() {
-    // Another way to do this would be to create
-    // the year texts once and then just hide them.
-    var yearsData = d3.keys(yearsTitleX);
-    var years = svg.selectAll('.year')
-      .data(yearsData);
+  // /*
+  //  * Shows Year title displays.
+  //  */
+  // function showYearTitles() {
+  //   // Another way to do this would be to create
+  //   // the year texts once and then just hide them.
+  //   var yearsData = d3.keys(yearsTitleX);
+  //   var years = svg.selectAll('.year')
+  //     .data(yearsData);
 
-    years.enter().append('text')
-      .attr('class', 'year')
-      .attr('x', function (d) { return yearsTitleX[d]; })
-      .attr('y', 40)
-      .attr('text-anchor', 'middle')
-      .text(function (d) { return d; });
-  }
+  //   years.enter().append('text')
+  //     .attr('class', 'year')
+  //     .attr('x', function (d) { return yearsTitleX[d]; })
+  //     .attr('y', 40)
+  //     .attr('text-anchor', 'middle')
+  //     .text(function (d) { return d; });
+  // }
 
 
   /*
@@ -280,7 +299,7 @@ function bubbleChart() {
                   addCommas(d.value) +
                   '</span><br/>' +
                   '<span class="name">Year: </span><span class="value">' +
-                  d.year +
+                  d.college +
                   '</span>';
 
     tooltip.showTooltip(content, d3.event);
@@ -292,25 +311,25 @@ function bubbleChart() {
   function hideDetail(d) {
     // reset outline
     d3.select(this)
-      .attr('stroke', d3.rgb(fillColor(d.group)).darker());
+      .attr('stroke', d3.rgb(fillColor(d.college)).darker());
 
     tooltip.hideTooltip();
   }
 
-  /*
-   * Externally accessible function (this is attached to the
-   * returned chart function). Allows the visualization to toggle
-   * between "single group" and "split by year" modes.
-   *
-   * displayName is expected to be a string and either 'year' or 'all'.
-   */
-  chart.toggleDisplay = function (displayName) {
-    if (displayName === 'year') {
-      splitBubbles();
-    } else {
-      groupBubbles();
-    }
-  };
+  // /*
+  //  * Externally accessible function (this is attached to the
+  //  * returned chart function). Allows the visualization to toggle
+  //  * between "single group" and "split by year" modes.
+  //  *
+  //  * displayName is expected to be a string and either 'year' or 'all'.
+  //  */
+  // chart.toggleDisplay = function (displayName) {
+  //   if (displayName === 'year') {
+  //     splitBubbles();
+  //   } else {
+  //     groupBubbles();
+  //   }
+  // };
 
 
   // return the chart function from closure.
@@ -360,25 +379,25 @@ function setupButtons() {
     });
 }
 
-/*
- * Helper function to convert a number into a string
- * and add commas to it to improve presentation.
- */
-function addCommas(nStr) {
-  nStr += '';
-  var x = nStr.split('.');
-  var x1 = x[0];
-  var x2 = x.length > 1 ? '.' + x[1] : '';
-  var rgx = /(\d+)(\d{3})/;
-  while (rgx.test(x1)) {
-    x1 = x1.replace(rgx, '$1' + ',' + '$2');
-  }
+// /*
+//  * Helper function to convert a number into a string
+//  * and add commas to it to improve presentation.
+//  */
+// function addCommas(nStr) {
+//   nStr += '';
+//   var x = nStr.split('.');
+//   var x1 = x[0];
+//   var x2 = x.length > 1 ? '.' + x[1] : '';
+//   var rgx = /(\d+)(\d{3})/;
+//   while (rgx.test(x1)) {
+//     x1 = x1.replace(rgx, '$1' + ',' + '$2');
+//   }
 
-  return x1 + x2;
-}
+//   return x1 + x2;
+// }
 
 // Load the data.
-d3.csv('data/gates_money.csv', display);
+d3.csv('data/charlotteData1.csv', display);
 
 // setup the buttons.
 setupButtons();

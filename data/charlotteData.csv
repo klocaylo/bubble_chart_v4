@@ -1,0 +1,30 @@
+﻿id,topic,college,publications
+Supply chain management,Supply chain management,Business,5
+Macroeconomics,Macroeconomics,Business,3
+Quality management,Quality management,Business,4
+Production,Production,Arts and Architecutre,8
+Performing arts,Performing arts,Arts and Architecutre,44
+Art,Art,Arts and Architecutre,35
+Theatre,Theatre,Arts and Architecutre,22
+Music,Music,Arts and Architecutre,26
+Bioinformatics,Bioinformatics,Computing and Informatics,8
+Machine-learning,Machine-learning,Computing and Informatics,8
+Inernet of things,Inernet of things,Computing and Informatics,4
+Teacher education,Teacher education,Education,7
+Students with disabilities,Students with disabilities,Education,3
+School counseling,School counseling,Education,5
+Applied behavior analysis,Applied behavior analysis,Education,3
+School leadership,School leadership,Education,2
+Health,Health,Health and Human Services,10
+Aging,Aging,Health and Human Services,8
+Ethics,Ethics,Health and Human Services,9
+Rhetoric,Rhetoric,Liberal Arts and Sciences,13
+Culture,Culture,Liberal Arts and Sciences,26
+American literature,Students with disabilities,Liberal Arts and Sciences,7
+Education,Education,Engineering,19
+Robotics,Robotics,Engineering,10
+Algorithms,Algorithims,Engineering,5
+Power systems,Engineering,Engineering,2
+Data science,Data science,Data Science (SDS),6
+Cyber security,Cyber security,Data Science (SDS),2
+Data mining,Data mining,Data Science (SDS),5
