@@ -19,17 +19,17 @@ function bubbleChart() {
   var center = { x: width / 2, y: height / 2 };
 
   var yearCenters = {
-    "Belk College of Business": { x: 0 , y: 0 },
-    "College of Arts + Architecture": { x: width / 2, y: height / 2 },
-    "College of Computing & Informatics": { x: 2 * width / 3, y: height / 2 },
+    'Belk College of Business': { x: 60 , y: 60 },
+    'College of Arts + Architecture': { x: width / 2, y: height / 2 },
+    'College of Computing & Informatics': { x: 2 * width / 3, y: height / 2 },
 
-    "College of Education": { x: 0 , y: 0 },
-    "College of Health & Human Services": { x: width / 2, y: height / 2 },
-    "College of Liberal Arts & Sciences": { x: 2 * width / 3, y: height / 2 },
+    'College of Education': { x: 60 , y: 60 },
+    'College of Health & Human Services': { x: width / 2, y: height / 2 },
+    'College of Liberal Arts & Sciences': { x: 2 * width / 3, y: height / 2 },
 
-    "Lee College of Engineering": { x: 0 , y: 0 },
-    "College of Arts + Architecture": { x: width / 2, y: height / 2 },
-    "School of Data Science (SDS)": { x: 2 * width / 3, y: height / 2 }
+    'Lee College of Engineering': { x: 60 , y: 60 },
+    'College of Arts + Architecture': { x: width / 2, y: height / 2 },
+    'School of Data Science (SDS)': { x: 2 * width / 3, y: height / 2 }
   };
 
   // // X locations of the year titles.
@@ -231,7 +231,7 @@ function bubbleChart() {
    * x force.
    */
   function nodeYearPos(d) {
-    return yearCenters[d.college].x;
+    return yearCenters[d.college].x
   }
 
 
@@ -326,32 +326,32 @@ function bubbleChart() {
   //   tooltip.hideTooltip();
   // }
 
-  /*
-   * Externally accessible function (this is attached to the
-   * returned chart function). Allows the visualization to toggle
-   * between "single group" and "split by year" modes.
-   *
-   * displayName is expected to be a string and either 'year' or 'all'.
-   */
-  chart.toggleDisplay = function (displayName) {
-    if (displayName === 'year') {
-      //showYearTitles();
+  // /*
+  //  * Externally accessible function (this is attached to the
+  //  * returned chart function). Allows the visualization to toggle
+  //  * between "single group" and "split by year" modes.
+  //  *
+  //  * displayName is expected to be a string and either 'year' or 'all'.
+  //  */
+  // chart.toggleDisplay = function (displayName) {
+  //   if (displayName === 'year') {
+  //     //showYearTitles();
 
-      // @v4 Reset the 'x' force to draw the bubbles to their year centers
-      simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
+  //     // @v4 Reset the 'x' force to draw the bubbles to their year centers
+  //     simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
 
-      // @v4 We can reset the alpha value and restart the simulation
-      simulation.alpha(1).restart();
-    } else {
-      hideYearTitles();
+  //     // @v4 We can reset the alpha value and restart the simulation
+  //     simulation.alpha(1).restart();
+  //   } else {
+  //     hideYearTitles();
 
-      // @v4 Reset the 'x' force to draw the bubbles to the center.
-      simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
+  //     // @v4 Reset the 'x' force to draw the bubbles to the center.
+  //     simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
 
-      // @v4 We can reset the alpha value and restart the simulation
-      simulation.alpha(1).restart();
-    }
-  }
+  //     // @v4 We can reset the alpha value and restart the simulation
+  //     simulation.alpha(1).restart();
+  //   }
+  // }
 
   //functionality for college button
   chart.toggleCollege = function () {
