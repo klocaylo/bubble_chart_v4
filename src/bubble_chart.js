@@ -20,7 +20,7 @@ function bubbleChart() {
 
   var yearCenters = {
     "Belk College of Business": { x: 0 , y: 0 },
-    "CCollege of Arts + Architecture": { x: width / 2, y: height / 2 },
+    "College of Arts + Architecture": { x: width / 2, y: height / 2 },
     "College of Computing & Informatics": { x: 2 * width / 3, y: height / 2 },
 
     "College of Education": { x: 0 , y: 0 },
@@ -28,7 +28,7 @@ function bubbleChart() {
     "College of Liberal Arts & Sciences": { x: 2 * width / 3, y: height / 2 },
 
     "Lee College of Engineering": { x: 0 , y: 0 },
-    "CCollege of Arts + Architecture": { x: width / 2, y: height / 2 },
+    "College of Arts + Architecture": { x: width / 2, y: height / 2 },
     "School of Data Science (SDS)": { x: 2 * width / 3, y: height / 2 }
   };
 
