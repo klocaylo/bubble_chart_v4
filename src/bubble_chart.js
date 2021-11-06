@@ -62,7 +62,7 @@ function bubbleChart() {
   // @v4 Before the charge was a stand-alone attribute
   //  of the force layout. Now we can use it as a separate force!
   function charge(d) {
-    return -Math.pow(d.radius, 2.0) * forceStrength;
+    return -Math.pow(d.radius + 1.5, 2.0) * forceStrength;
   }
 
   // Here we create a force layout and
@@ -240,7 +240,7 @@ function bubbleChart() {
    * The year labels are hidden and the force layout
    * tick function is set to move all nodes to the
    * center of the visualization.
-   */
+   */ 
   function groupBubbles() {
     //hideYearTitles();
 
@@ -252,79 +252,79 @@ function bubbleChart() {
   }
 
 
-  /*
-   * Sets visualization in "split by year mode".
-   * The year labels are shown and the force layout
-   * tick function is set to move nodes to the
-   * yearCenter of their data's year.
-   */
-  function splitBubbles() {
-    showYearTitles();
+  // /*
+  //  * Sets visualization in "split by year mode".
+  //  * The year labels are shown and the force layout
+  //  * tick function is set to move nodes to the
+  //  * yearCenter of their data's year.
+  //  */
+  // function splitBubbles() {
+  //   showYearTitles();
 
-    // @v4 Reset the 'x' force to draw the bubbles to their year centers
-    simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
+  //   // @v4 Reset the 'x' force to draw the bubbles to their year centers
+  //   simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
 
-    // @v4 We can reset the alpha value and restart the simulation
-    simulation.alpha(1).restart();
-  }
+  //   // @v4 We can reset the alpha value and restart the simulation
+  //   simulation.alpha(1).restart();
+  // }
 
-  /*
-   * Hides Year title displays.
-   */
-  function hideYearTitles() {
-    svg.selectAll('.college').remove();
-  }
+  // /*
+  //  * Hides Year title displays.
+  //  */
+  // function hideYearTitles() {
+  //   svg.selectAll('.college').remove();
+  // }
 
-  /*
-   * Shows Year title displays.
-   */
-  function showYearTitles() {
-    // Another way to do this would be to create
-    // the year texts once and then just hide them.
-    var yearsData = d3.keys(yearsTitleX);
-    var years = svg.selectAll('.year')
-      .data(yearsData);
+  // /*
+  //  * Shows Year title displays.
+  //  */
+  // function showYearTitles() {
+  //   // Another way to do this would be to create
+  //   // the year texts once and then just hide them.
+  //   var yearsData = d3.keys(yearsTitleX);
+  //   var years = svg.selectAll('.year')
+  //     .data(yearsData);
 
-    years.enter().append('text')
-      .attr('class', 'year')
-      .attr('x', function (d) { return yearsTitleX[d]; })
-      .attr('y', 40)
-      .attr('text-anchor', 'middle')
-      .text(function (d) { return d; });
-  }
+  //   years.enter().append('text')
+  //     .attr('class', 'year')
+  //     .attr('x', function (d) { return yearsTitleX[d]; })
+  //     .attr('y', 40)
+  //     .attr('text-anchor', 'middle')
+  //     .text(function (d) { return d; });
+  // }
 
 
-  /*
-   * Function called on mouseover to display the
-   * details of a bubble in the tooltip.
-   */
-  function showDetail(d) {
-    // change outline to indicate hover state.
-    d3.select(this).attr('stroke', 'black');
+  // /*
+  //  * Function called on mouseover to display the
+  //  * details of a bubble in the tooltip.
+  //  */
+  // function showDetail(d) {
+  //   // change outline to indicate hover state.
+  //   d3.select(this).attr('stroke', 'black');
 
-    var content = '<span class="name">Title: </span><span class="value">' +
-                  d.name +
-                  '</span><br/>' +
-                  '<span class="name">Amount: </span><span class="value">$' +
-                  addCommas(d.value) +
-                  '</span><br/>' +
-                  '<span class="name">Year: </span><span class="value">' +
-                  d.college +
-                  '</span>';
+  //   var content = '<span class="name">Title: </span><span class="value">' +
+  //                 d.name +
+  //                 '</span><br/>' +
+  //                 '<span class="name">Amount: </span><span class="value">$' +
+  //                 addCommas(d.value) +
+  //                 '</span><br/>' +
+  //                 '<span class="name">Year: </span><span class="value">' +
+  //                 d.college +
+  //                 '</span>';
 
-    tooltip.showTooltip(content, d3.event);
-  }
+  //   tooltip.showTooltip(content, d3.event);
+  // }
 
-  /*
-   * Hides tooltip
-   */
-  function hideDetail(d) {
-    // reset outline
-    d3.select(this)
-      .attr('stroke', d3.rgb(fillColor(d.college)).darker());
+  // /*
+  //  * Hides tooltip
+  //  */
+  // function hideDetail(d) {
+  //   // reset outline
+  //   d3.select(this)
+  //     .attr('stroke', d3.rgb(fillColor(d.college)).darker());
 
-    tooltip.hideTooltip();
-  }
+  //   tooltip.hideTooltip();
+  // }
 
   /*
    * Externally accessible function (this is attached to the
