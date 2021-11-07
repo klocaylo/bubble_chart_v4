@@ -8,8 +8,8 @@
  */
 function bubbleChart() {
   // Constants for sizing
-  var width = 940;
-  var height = 600;
+  var width = 1450;
+  var height = 1200;
 
   // // tooltip for mouseover functionality
   // var tooltip = floatingTooltip('gates_tooltip', 240);
@@ -18,18 +18,27 @@ function bubbleChart() {
   // on which view mode is selected.
   var center = { x: width / 2, y: height / 2 };
 
+  var yearCenters = new Object();
+
   var yearCenters = {
-    'Belk College of Business': { x: 60 , y: 60 },
-    'College of Arts + Architecture': { x: width / 2, y: height / 2 },
-    'College of Computing & Informatics': { x: 2 * width / 3, y: height / 2 },
 
-    'College of Education': { x: 60 , y: 60 },
-    'College of Health & Human Services': { x: width / 2, y: height / 2 },
-    'College of Liberal Arts & Sciences': { x: 2 * width / 3, y: height / 2 },
+    //top and bottom groups
+    'Belk College of Business': { x: width / 2 , y: 400},
+    'College of Arts + Architecture': { x: width / 2, y: 800 },
 
-    'Lee College of Engineering': { x: 60 , y: 60 },
-    'College of Arts + Architecture': { x: width / 2, y: height / 2 },
-    'School of Data Science (SDS)': { x: 2 * width / 3, y: height / 2 }
+    //left groups
+    'College of Computing & Informatics': { x: 608 , y: 470 },
+    'College of Education': { x: 608 , y: 750 },
+
+    //very left group
+    'College of Health & Human Services': { x: 540 , y: height / 2 },
+
+    //right groups
+    'College of Liberal Arts & Sciences': { x: 900 , y: 455 },
+    'Lee College of Engineering': { x: 917 , y: 750 },
+
+    //very right group
+    'School of Data Science (SDS)': { x: 950 , y: height / 2 }
   };
 
   // // X locations of the year titles.
@@ -62,7 +71,7 @@ function bubbleChart() {
   // @v4 Before the charge was a stand-alone attribute
   //  of the force layout. Now we can use it as a separate force!
   function charge(d) {
-    return -Math.pow(d.radius + 1.5, 2.0) * forceStrength;
+    return -Math.pow(d.radius + 1, 2.0) * forceStrength;
   }
 
   // Here we create a force layout and
@@ -119,7 +128,7 @@ function bubbleChart() {
     var radiusScale = d3.scalePow()
       .exponent(0.5)
       .domain([1, 300])
-      .range([5, 50]);
+      .range([5,150]);
 
     // Use map() to convert raw data into node data.
     // Checkout http://learnjsdata.com/ for more on
@@ -138,8 +147,8 @@ function bubbleChart() {
       };
     });
 
-    // sort them to prevent occlusion of smaller nodes.
-    //myNodes.sort(function (a, b) { return b.value - a.value; });
+    // sort them to prevent blockage of smaller nodes.
+    myNodes.sort(function (a, b) { return b.value - a.value; });
 
     return myNodes;
   }
@@ -230,8 +239,16 @@ function bubbleChart() {
    * Provides a x value for each node to be used with the split by year
    * x force.
    */
-  function nodeYearPos(d) {
+  function nodeCollegePositionX(d) {
     return yearCenters[d.college].x
+  }
+
+   /*
+   * Provides a x value for each node to be used with the split by year
+   * x force.
+   */
+   function nodeCollegePositionY(d) {
+    return yearCenters[d.college].y
   }
 
 
@@ -374,7 +391,9 @@ function bubbleChart() {
 
     
     // @v4 Reset the 'x' force to draw the bubbles to their year centers
-    simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos))
+    simulation.force('x', d3.forceX().strength(forceStrength).x(nodeCollegePositionX))
+    simulation.force('y', d3.forceY().strength(forceStrength).y(nodeCollegePositionY))
+    
 
     // @v4 We can reset the alpha value and restart the simulation
     simulation.alpha(1).restart()
@@ -390,6 +409,7 @@ function bubbleChart() {
     //GROUP BUBBLES
     // @v4 Reset the 'x' force to draw the bubbles to the center.
     simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
+    simulation.force('y', d3.forceY().strength(forceStrength).y(center.y));
 
     // @v4 We can reset the alpha value and restart the simulation
     simulation.alpha(1).restart();
@@ -482,6 +502,6 @@ function setupActualButtons(){
 // }
 
 // Load the data.
-d3.csv('data/charlotteData.csv', display);
+d3.csv('data/charlotteData1.csv', display);
 
 setupActualButtons();
