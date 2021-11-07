@@ -7,76 +7,86 @@
  *
  */
 function bubbleChart() {
-  // Constants for sizing
+
+  /**-------------------------------------------------- CREATING VARIABLES ---------------------------------------------------------- */
+  // size of the SVG
   var width = 1450;
   var height = 1200;
 
   // // tooltip for mouseover functionality
   // var tooltip = floatingTooltip('gates_tooltip', 240);
 
-  // Locations to move bubbles towards, depending
-  // on which view mode is selected.
+  // Locations to move bubbles towards when all the bubbles need to be combined
   var center = { x: width / 2, y: height / 2 };
 
-  var yearCenters = new Object();
-
-  var yearCenters = {
-
-    //top and bottom groups
+  // Locations to move bubbles towards when the bubbles need to be split
+  var collegeCenters = {
+    //top and bottom group of bubbles
     'Belk College of Business': { x: width / 2 , y: 400},
     'College of Arts + Architecture': { x: width / 2, y: 800 },
 
-    //left groups
+    //left group of bubbles
     'College of Computing & Informatics': { x: 608 , y: 470 },
     'College of Education': { x: 608 , y: 750 },
 
-    //very left group
+    //very left group of bubbles
     'College of Health & Human Services': { x: 540 , y: height / 2 },
 
-    //right groups
+    //right groups of bubbles
     'College of Liberal Arts & Sciences': { x: 900 , y: 455 },
     'Lee College of Engineering': { x: 917 , y: 750 },
 
-    //very right group
+    //very right group of bubbles
     'School of Data Science (SDS)': { x: 950 , y: height / 2 }
   };
 
-  // // X locations of the year titles.
-  // var yearsTitleX = {
-  //   2008: 160,
-  //   2009: width / 2,
-  //   2010: width - 160
-  // };
+  // Locations of the college titles when the bubbles are split
+  var collegeTitles = {
+    //top and bottom group of bubbles
+    'Belk College of Business': { x: 570, y: 100},
+    'College of Arts + Architecture': { x: 580, y: 1120 },
 
-  // @v4 strength to apply to the position forces
+    //left group of bubbles
+    'College of Computing & Informatics': { x: 70 , y: 250 },
+    'College of Education': { x: 200 , y: 1000 },
+
+    //very left group of bubbles
+    'College of Health & Human Services': { x: 50 , y: 420},
+
+    //right groups of bubbles
+    'College of Liberal Arts & Sciences': { x: 1150 , y: 250 },
+    'Lee College of Engineering': { x: 1140 , y: 980 },
+
+    //very right group of bubbles
+    'School of Data Science (SDS)': { x: 1120 , y: 520 }
+  };
+
+  // Strength to apply to the position forces (makes the bubbles move)
   var forceStrength = 0.03;
 
-  // These will be set in create_nodes and create_vis
+  // Creating variables to be used later on
   var svg = null;
   var bubbles = null;
   var nodes = [];
 
-  // Charge function that is called for each node.
-  // As part of the ManyBody force.
-  // This is what creates the repulsion between nodes.
-  //
-  // Charge is proportional to the diameter of the
-  // circle (which is stored in the radius attribute
-  // of the circle's associated data.
-  //
-  // This is done to allow for accurate collision
-  // detection with nodes of different sizes.
-  //
-  // Charge is negative because we want nodes to repel.
-  // @v4 Before the charge was a stand-alone attribute
-  //  of the force layout. Now we can use it as a separate force!
+
+  /** ------------------------------------------------------- CREATING FUNCTIONS ---------------------------------------------------- */
+
+  /** Charge function that is called for each node.
+  This is what creates the repulsion between nodes.
+  Charge is proportional to the diameter of the
+  circle (which is stored in the radius attribute
+  of the circle's associated data).
+  This is done to allow for accurate collision
+  detection with nodes of different sizes.
+  Charge is negative because we want nodes to repel.
+  */
   function charge(d) {
     return -Math.pow(d.radius + 1, 2.0) * forceStrength;
   }
 
-  // Here we create a force layout and
-  // @v4 We create a force simulation now and
-  //  add forces to it.
+  // Here we create a force layout.
+  // We create a force simulation now and add forces to it.
   var simulation = d3.forceSimulation()
     .velocityDecay(0.2)
     .force('x', d3.forceX().strength(forceStrength).x(center.x))
@@ -84,12 +94,10 @@ function bubbleChart() {
     .force('charge', d3.forceManyBody().strength(charge))
     .on('tick', ticked);
 
-  // @v4 Force starts up automatically,
-  //  which we don't want as there aren't any nodes yet.
+  // Force starts up automatically which we don't want as there aren't any nodes yet, so we stop the simulation.
   simulation.stop();
 
-  // Nice looking colors - no reason to buck the trend
-  // @v4 scales now have a flattened naming scheme
+  // Choosing the colors of the bubbles
   var fillColor = d3.scaleOrdinal()
     .domain(['Belk College of Business', 
       'College of Arts + Architecture', 
@@ -124,15 +132,13 @@ function bubbleChart() {
    */
   function createNodes(rawData) {
     // Sizes bubbles based on area.
-    // @v4: new flattened scale names.
     var radiusScale = d3.scalePow()
       .exponent(0.5)
       .domain([1, 300])
       .range([5,150]);
 
     // Use map() to convert raw data into node data.
-    // Checkout http://learnjsdata.com/ for more on
-    // working with data.
+    // Checkout http://learnjsdata.com/ for more on working with data.
     var myNodes = rawData.map(function (d) {
       return {
         id: d.id,
@@ -147,7 +153,7 @@ function bubbleChart() {
       };
     });
 
-    // sort them to prevent blockage of smaller nodes.
+    // Sort the bubbles to prevent blockage of smaller bubbles/nodes.
     myNodes.sort(function (a, b) { return b.value - a.value; });
 
     return myNodes;
@@ -186,8 +192,8 @@ function bubbleChart() {
     // Create new circle elements each with class `bubble`.
     // There will be one circle.bubble for each object in the nodes array.
     // Initially, their radius (r attribute) will be 0.
-    // @v4 Selections are immutable, so lets capture the
-    //  enter selection to apply our transtition to below.
+    // Selections are immutable, so lets capture the
+    // enter selection to apply our transtition to below.
     var bubblesE = bubbles.enter().append('circle')
       .classed('bubble', true)
       .attr('r', 0)
@@ -199,11 +205,10 @@ function bubbleChart() {
       // .on('mouseover', showDetail)
       // .on('mouseout', hideDetail);
 
-    // @v4 Merge the original empty selection and the enter selection
+    // Merge the original empty selection and the enter selection
     bubbles = bubbles.merge(bubblesE)
 
-    // Fancy transition to make bubbles appear, ending with the
-    // correct radius
+    // Fancy transition to make bubbles appear, ending with the correct radius
     bubbles.transition()
       .duration(2000)
       .attr('r', function (d) { 
@@ -211,7 +216,7 @@ function bubbleChart() {
       })
 
     // Set the simulation's nodes to our newly created nodes array.
-    // @v4 Once we set the nodes, the simulation will start running automatically!
+    // Once we set the nodes, the simulation will start running automatically!
     simulation.nodes(nodes);
 
     // Set initial layout to single group.
@@ -240,7 +245,7 @@ function bubbleChart() {
    * x force.
    */
   function nodeCollegePositionX(d) {
-    return yearCenters[d.college].x
+    return collegeCenters[d.college].x
   }
 
    /*
@@ -248,7 +253,7 @@ function bubbleChart() {
    * x force.
    */
    function nodeCollegePositionY(d) {
-    return yearCenters[d.college].y
+    return collegeCenters[d.college].y
   }
 
 
@@ -267,48 +272,6 @@ function bubbleChart() {
     // @v4 We can reset the alpha value and restart the simulation
     simulation.alpha(1).restart();
   }
-
-
-  // /*
-  //  * Sets visualization in "split by year mode".
-  //  * The year labels are shown and the force layout
-  //  * tick function is set to move nodes to the
-  //  * yearCenter of their data's year.
-  //  */
-  // function splitBubbles() {
-  //   showYearTitles();
-
-  //   // @v4 Reset the 'x' force to draw the bubbles to their year centers
-  //   simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
-
-  //   // @v4 We can reset the alpha value and restart the simulation
-  //   simulation.alpha(1).restart();
-  // }
-
-  // /*
-  //  * Hides Year title displays.
-  //  */
-  // function hideYearTitles() {
-  //   svg.selectAll('.college').remove();
-  // }
-
-  // /*
-  //  * Shows Year title displays.
-  //  */
-  // function showYearTitles() {
-  //   // Another way to do this would be to create
-  //   // the year texts once and then just hide them.
-  //   var yearsData = d3.keys(yearsTitleX);
-  //   var years = svg.selectAll('.year')
-  //     .data(yearsData);
-
-  //   years.enter().append('text')
-  //     .attr('class', 'year')
-  //     .attr('x', function (d) { return yearsTitleX[d]; })
-  //     .attr('y', 40)
-  //     .attr('text-anchor', 'middle')
-  //     .text(function (d) { return d; });
-  // }
 
 
   // /*
@@ -373,23 +336,27 @@ function bubbleChart() {
   //functionality for college button
   chart.toggleCollege = function () {
 
-    //displayBubbles()
-
     //SHOW YEAR TITLES
     // Another way to do this would be to create
     // the year texts once and then just hide them.
-    // var yearsData = d3.keys(yearsTitleX);
-    // var years = svg.selectAll('.year')
-    //   .data(yearsData);
+    var collegeData = d3.keys(collegeTitles);
+    var colleges = svg.selectAll('.college')
+      .data(collegeData);
 
-    // years.enter().append('text')
-    //   .attr('class', 'year')
-    //   .attr('x', function (d) { return yearsTitleX[d]; })
-    //   .attr('y', 40)
-    //   .attr('text-anchor', 'middle')
-    //   .text(function (d) { return d; });
+    colleges.enter().append('text')
+      .attr('class', 'year')
+      .attr('x', function (d) { 
+        return collegeTitles[d].x
+      })
+      .attr('y', function (d) { 
+        return collegeTitles[d].y
+      })
+      //.attr('text-anchor', 'middle')
+      .text(function (d) { 
+        return d; 
+      });
 
-    
+    //FORCES TO MAKE THE BUBBLES SPLIT
     // @v4 Reset the 'x' force to draw the bubbles to their year centers
     simulation.force('x', d3.forceX().strength(forceStrength).x(nodeCollegePositionX))
     simulation.force('y', d3.forceY().strength(forceStrength).y(nodeCollegePositionY))
@@ -404,9 +371,9 @@ function bubbleChart() {
     //groupBubbles()
 
     // //HIDE YEAR TITLES
-    // svg.selectAll('.year').remove();
+    svg.selectAll('.year').remove();
 
-    //GROUP BUBBLES
+    //FORCES TO GROUP BUBBLES
     // @v4 Reset the 'x' force to draw the bubbles to the center.
     simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
     simulation.force('y', d3.forceY().strength(forceStrength).y(center.y));
@@ -456,8 +423,7 @@ function setupButtons() {
       // Get the id of the button
       var buttonId = button.attr('id');
 
-      // Toggle the bubble chart based on
-      // the currently clicked button.
+      // Toggle the bubble chart based on the currently clicked button.
       myBubbleChart.toggleDisplay(buttonId);
     });
 }
