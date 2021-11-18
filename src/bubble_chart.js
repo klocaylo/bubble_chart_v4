@@ -37,6 +37,26 @@ function bubbleChart() {
     'School of Data Science (SDS)': { x: 950, y: height / 2 }
   };
 
+  var collegeScaleY = {
+    //top and bottom group of bubbles
+    'Belk College of Business': { y: 150 },
+    'College of Arts + Architecture': {y: 300 },
+
+    //left group of bubbles
+    'College of Computing & Informatics': { y: 450 },
+    'College of Education': { y: 600 },
+
+    //very left group of bubbles
+    'College of Health & Human Services': { y: 750 },
+
+    //right groups of bubbles
+    'College of Liberal Arts & Sciences': { y: 900 },
+    'Lee College of Engineering': { y: 1050 },
+
+    //very right group of bubbles
+    'School of Data Science (SDS)': {y: 1200 }
+  };
+
 
   // Locations of the college titles when the bubbles are split
   var collegeTitles = {
@@ -210,19 +230,59 @@ function bubbleChart() {
     // convert raw data into nodes data
     nodes = createNodes(rawData);
 
+    /*-------------------------------------------------- SETTING UP SVG AND SCALE X AND Y AXIS -------------------------------------------- */
+
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 10, right: 20, bottom: 30, left: 50},
+    width = 1450 - margin.left - margin.right,
+    height = 1200 - margin.top - margin.bottom;
+
     // Create a SVG element inside the provided selector
     // with desired size.
     svg = d3.select(selector)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height);
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Add X axis
+    var x = d3.scaleBand()
+      .domain(['Belk College of Business',
+        'College of Arts + Architecture',
+        'College of Computing & Informatics',
+        'College of Education',
+        'College of Health & Human Services',
+        'College of Liberal Arts & Sciences',
+        'Lee College of Engineering',
+        'School of Data Science (SDS)'
+      ])
+      .range([ 0, width ]);
+    svg.append("g")
+      .attr("class", "axisWhite")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+      .domain([0, 30])
+      .range([ height, 0]);
+    svg.append("g")
+      .attr("class", "axisWhite")
+      .call(d3.axisLeft(y));
+
+    //set axis opacity to 0 so that it doesn't show right away
+    svg.selectAll('.axisWhite').style("opacity", 0)
+
+
+    /*-------------------------------------------------- BUBBLES AND TOOLTIP -------------------------------------------- */
 
     // Bind nodes data to what will become DOM elements to represent them.
     bubbles = svg.selectAll('.bubble')
       .data(nodes, function (d) {
         return d.id
       })
-
 
     var Tooltip = d3.select('#vis')
       .append("div")
@@ -334,6 +394,23 @@ function bubbleChart() {
     return collegeCenters[d.college].y
   }
 
+  /*
+   * Provides a x value for each node to be used with the split by year
+   * x force.
+   */
+  function nodeScalePositionX(d) {
+    return collegeScaleY[d.college].y
+  }
+
+  /*
+  * Provides a x value for each node to be used with the split by year
+  * x force.
+  */
+  function nodeScalePositionY(d) {
+    return (height - 45) - (d.value * (1450/39))
+  }
+
+
 
   /*
    * Sets visualization in "single group mode".
@@ -364,6 +441,10 @@ function bubbleChart() {
 
   //functionality for college button
   chart.toggleCollege = function () {
+
+    //HIDE AXIS 
+    svg.selectAll('.axisWhite').style("opacity", 0)
+    svg.selectAll("circle").style("opacity", 1)
 
     //SHOW YEAR TITLES
     // Another way to do this would be to create
@@ -410,10 +491,11 @@ function bubbleChart() {
 
   //functionality for commbine button
   chart.toggleCombine = function () {
-    //groupBubbles()
 
-    // //HIDE YEAR TITLES
+    //HIDE YEAR TITLES AND AXIS
     svg.selectAll('.year').remove();
+    svg.selectAll('.axisWhite').style("opacity", 0)
+    svg.selectAll("circle").style("opacity", 1)
 
     //FORCES TO GROUP BUBBLES
     // @v4 Reset the 'x' force to draw the bubbles to the center.
@@ -422,6 +504,24 @@ function bubbleChart() {
 
     // @v4 We can reset the alpha value and restart the simulation
     simulation.alpha(1).restart();
+  }
+
+  //functionality for toggling the scale
+  chart.toggleScale = function() {
+
+    svg.selectAll('.axisWhite').style("opacity", 1.0)
+    svg.selectAll("circle").style("opacity", 0.8)
+
+    //HIDE YEAR TITLES
+    svg.selectAll('.year').remove();
+
+    //FORCES TO GROUP BUBBLES
+    // @v4 Reset the 'x' force to draw the bubbles to the center.
+    simulation.force('x', d3.forceX().strength(0.06).x(nodeScalePositionX));
+    simulation.force('y', d3.forceY().strength(0.2).y(nodeScalePositionY));
+
+    // @v4 We can reset the alpha value and restart the simulation
+    simulation.alpha(0.3).restart();
   }
 
   // return the chart function from closure.
@@ -465,6 +565,14 @@ function setupActualButtons() {
       console.log("You clicked combine!")
 
       myBubbleChart.toggleCombine()
+
+    });
+
+  d3.select('#scale')
+    .on('click', function () {
+      console.log("You clicked scale!")
+
+      myBubbleChart.toggleScale()
 
     });
 }
