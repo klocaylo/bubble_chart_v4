@@ -13,52 +13,85 @@ function bubbleChart() {
   var width = 1450;
   var height = 1200;
 
-  // // tooltip for mouseover functionality
-  // var tooltip = floatingTooltip('gates_tooltip', 240);
-
   // Locations to move bubbles towards when all the bubbles need to be combined
   var center = { x: width / 2, y: height / 2 };
 
   // Locations to move bubbles towards when the bubbles need to be split
   var collegeCenters = {
     //top and bottom group of bubbles
-    'Belk College of Business': { x: width / 2 , y: 400},
+    'Belk College of Business': { x: width / 2, y: 400 },
     'College of Arts + Architecture': { x: width / 2, y: 800 },
 
     //left group of bubbles
-    'College of Computing & Informatics': { x: 608 , y: 470 },
-    'College of Education': { x: 608 , y: 750 },
+    'College of Computing & Informatics': { x: 608, y: 470 },
+    'College of Education': { x: 608, y: 750 },
 
     //very left group of bubbles
-    'College of Health & Human Services': { x: 540 , y: height / 2 },
+    'College of Health & Human Services': { x: 540, y: height / 2 },
 
     //right groups of bubbles
-    'College of Liberal Arts & Sciences': { x: 900 , y: 455 },
-    'Lee College of Engineering': { x: 917 , y: 750 },
+    'College of Liberal Arts & Sciences': { x: 900, y: 455 },
+    'Lee College of Engineering': { x: 917, y: 750 },
 
     //very right group of bubbles
-    'School of Data Science (SDS)': { x: 950 , y: height / 2 }
+    'School of Data Science (SDS)': { x: 950, y: height / 2 }
   };
+
 
   // Locations of the college titles when the bubbles are split
   var collegeTitles = {
     //top and bottom group of bubbles
-    'Belk College of Business': { x: 570, y: 100},
-    'College of Arts + Architecture': { x: 580, y: 1120 },
+    'Belk College of Business': { x: 570, y: 100, 
+      category: 'Belk College of Business<br>', 
+      description: "UNC Charlotte's Belk <br> College of Business has been <br> driving business in the Charlotte <br> region for over 50 years. <br> ",
+      link: "https://belkcollege.charlotte.edu/"
+    },
+    
+    'College of Arts + Architecture': { x: 580, y: 1120, 
+      category: 'Belk College of Business<br>', 
+      description: "UNC Charlotte's Belk <br> College of Business has been <br> driving business in the Charlotte <br> region for over 50 years. <br> ",
+      link: "https://belkcollege.charlotte.edu/"
+    },
 
     //left group of bubbles
-    'College of Computing & Informatics': { x: 70 , y: 250 },
-    'College of Education': { x: 200 , y: 1000 },
+    'College of Computing & Informatics': { x: 70, y: 250, 
+      category: 'Belk College of Business<br>', 
+      description: "UNC Charlotte's Belk <br> College of Business has been <br> driving business in the Charlotte <br> region for over 50 years. <br> ",
+      link: "https://belkcollege.charlotte.edu/"
+    },
+
+    'College of Education': { x: 200, y: 1000, 
+      category: 'Belk College of Business<br>', 
+      description: "UNC Charlotte's Belk <br> College of Business has been <br> driving business in the Charlotte <br> region for over 50 years. <br> ",
+      link: "https://belkcollege.charlotte.edu/"
+    },
 
     //very left group of bubbles
-    'College of Health & Human Services': { x: 50 , y: 420},
+    'College of Health & Human Services': { x: 50, y: 420, 
+      category: 'Belk College of Business<br>', 
+      description: "UNC Charlotte's Belk <br> College of Business has been <br> driving business in the Charlotte <br> region for over 50 years. <br> ",
+      link: "https://belkcollege.charlotte.edu/"
+    },
 
     //right groups of bubbles
-    'College of Liberal Arts & Sciences': { x: 1150 , y: 250 },
-    'Lee College of Engineering': { x: 1140 , y: 980 },
+    'College of Liberal Arts & Sciences': { x: 1150, y: 250, 
+      category: 'Belk College of Business<br>', 
+      description: "UNC Charlotte's Belk <br> College of Business has been <br> driving business in the Charlotte <br> region for over 50 years. <br> ",
+      link: "https://belkcollege.charlotte.edu/"
+    },
+    
+    'Lee College of Engineering': { x: 1140, y: 980, 
+      category: 'Belk College of Business<br>', 
+      description: "UNC Charlotte's Belk <br> College of Business has been <br> driving business in the Charlotte <br> region for over 50 years. <br> ",
+      link: "https://belkcollege.charlotte.edu/"
+    },
 
     //very right group of bubbles
-    'School of Data Science (SDS)': { x: 1120 , y: 520 }
+    'School of Data Science (SDS)': { x: 1120, y: 520, 
+      category: 'Belk College of Business<br>', 
+      description: "UNC Charlotte's Belk <br> College of Business has been <br> driving business in the Charlotte <br> region for over 50 years. <br> ",
+      link: "https://belkcollege.charlotte.edu/"
+    }
   };
 
   // Strength to apply to the position forces (makes the bubbles move)
@@ -97,10 +130,11 @@ function bubbleChart() {
   // Force starts up automatically which we don't want as there aren't any nodes yet, so we stop the simulation.
   simulation.stop();
 
+
   // Choosing the colors of the bubbles
   var fillColor = d3.scaleOrdinal()
-    .domain(['Belk College of Business', 
-      'College of Arts + Architecture', 
+    .domain(['Belk College of Business',
+      'College of Arts + Architecture',
       'College of Computing & Informatics',
       'College of Education',
       'College of Health & Human Services',
@@ -108,8 +142,8 @@ function bubbleChart() {
       'Lee College of Engineering',
       'School of Data Science (SDS)'
     ])
-    .range(['#f1da14', 
-      '#3ab988', 
+    .range(['#f1da14',
+      '#3ab988',
       '#b8e04a',
       '#8cd646',
       '#2c909a',
@@ -133,9 +167,9 @@ function bubbleChart() {
   function createNodes(rawData) {
     // Sizes bubbles based on area.
     var radiusScale = d3.scalePow()
-      .exponent(0.5)
+      .exponent(0.6)
       .domain([1, 300])
-      .range([5,150]);
+      .range([5, 150]);
 
     // Use map() to convert raw data into node data.
     // Checkout http://learnjsdata.com/ for more on working with data.
@@ -185,9 +219,26 @@ function bubbleChart() {
 
     // Bind nodes data to what will become DOM elements to represent them.
     bubbles = svg.selectAll('.bubble')
-      .data(nodes, function (d) { 
+      .data(nodes, function (d) {
         return d.id
       })
+
+
+    var Tooltip = d3.select('#vis')
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0)
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "2px")
+      .style("border-radius", "5px")
+      .style("padding", "5px")
+
+    d3.selection.prototype.moveToFront = function () {
+      return this.each(function () {
+        this.parentNode.appendChild(this);
+      });
+    };
 
     // Create new circle elements each with class `bubble`.
     // There will be one circle.bubble for each object in the nodes array.
@@ -197,13 +248,40 @@ function bubbleChart() {
     var bubblesE = bubbles.enter().append('circle')
       .classed('bubble', true)
       .attr('r', 0)
-      .attr('fill', function (d) { 
+      .attr('fill', function (d) {
         return fillColor(d.college)
       })
       .attr('stroke', "#181818")
       .attr('stroke-width', 2)
-      // .on('mouseover', showDetail)
-      // .on('mouseout', hideDetail);
+      .on('mouseover', function (d) {
+        d3.select(this)
+          .transition()
+          .duration('100')
+          .attr('r', function (d) {
+            return d.radius + 5
+          })
+          .style("stroke", "black")
+
+        Tooltip
+          .html("Name: " + d.name + "<br>College: " + d.college + "<br>Total Publication: " + d.value)
+          .transition().duration(500)
+          .style("opacity", 1)
+          .style("left", (d3.event.pageX + 28) + "px")
+          .style("top", (d3.event.pageY) + "px")
+
+
+      })
+      .on("mouseleave", function (d) {
+        d3.select(this).transition()
+          .duration('100')
+          .attr("r", function (d) {
+            return d.radius
+          })
+          .style("stroke", "transparent")
+        Tooltip
+          .transition().duration(4000)
+          .style("opacity", 0)
+      })
 
     // Merge the original empty selection and the enter selection
     bubbles = bubbles.merge(bubblesE)
@@ -211,7 +289,7 @@ function bubbleChart() {
     // Fancy transition to make bubbles appear, ending with the correct radius
     bubbles.transition()
       .duration(2000)
-      .attr('r', function (d) { 
+      .attr('r', function (d) {
         return d.radius
       })
 
@@ -232,10 +310,10 @@ function bubbleChart() {
    */
   function ticked() {
     bubbles
-      .attr('cx', function (d) { 
+      .attr('cx', function (d) {
         return d.x
       })
-      .attr('cy', function (d) { 
+      .attr('cy', function (d) {
         return d.y
       })
   }
@@ -248,11 +326,11 @@ function bubbleChart() {
     return collegeCenters[d.college].x
   }
 
-   /*
-   * Provides a x value for each node to be used with the split by year
-   * x force.
-   */
-   function nodeCollegePositionY(d) {
+  /*
+  * Provides a x value for each node to be used with the split by year
+  * x force.
+  */
+  function nodeCollegePositionY(d) {
     return collegeCenters[d.college].y
   }
 
@@ -262,7 +340,7 @@ function bubbleChart() {
    * The year labels are hidden and the force layout
    * tick function is set to move all nodes to the
    * center of the visualization.
-   */ 
+   */
   function groupBubbles() {
     //hideYearTitles();
 
@@ -273,65 +351,16 @@ function bubbleChart() {
     simulation.alpha(1).restart();
   }
 
+  var TooltipCollege = d3.select("#vis")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 1)
+    .style("background-color", "white")
+    .style("border", "solid")
+   .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
 
-  // /*
-  //  * Function called on mouseover to display the
-  //  * details of a bubble in the tooltip.
-  //  */
-  // function showDetail(d) {
-  //   // change outline to indicate hover state.
-  //   d3.select(this).attr('stroke', 'black');
-
-  //   var content = '<span class="name">Title: </span><span class="value">' +
-  //                 d.name +
-  //                 '</span><br/>' +
-  //                 '<span class="name">Amount: </span><span class="value">$' +
-  //                 addCommas(d.value) +
-  //                 '</span><br/>' +
-  //                 '<span class="name">Year: </span><span class="value">' +
-  //                 d.college +
-  //                 '</span>';
-
-  //   tooltip.showTooltip(content, d3.event);
-  // }
-
-  // /*
-  //  * Hides tooltip
-  //  */
-  // function hideDetail(d) {
-  //   // reset outline
-  //   d3.select(this)
-  //     .attr('stroke', d3.rgb(fillColor(d.college)).darker());
-
-  //   tooltip.hideTooltip();
-  // }
-
-  // /*
-  //  * Externally accessible function (this is attached to the
-  //  * returned chart function). Allows the visualization to toggle
-  //  * between "single group" and "split by year" modes.
-  //  *
-  //  * displayName is expected to be a string and either 'year' or 'all'.
-  //  */
-  // chart.toggleDisplay = function (displayName) {
-  //   if (displayName === 'year') {
-  //     //showYearTitles();
-
-  //     // @v4 Reset the 'x' force to draw the bubbles to their year centers
-  //     simulation.force('x', d3.forceX().strength(forceStrength).x(nodeYearPos));
-
-  //     // @v4 We can reset the alpha value and restart the simulation
-  //     simulation.alpha(1).restart();
-  //   } else {
-  //     hideYearTitles();
-
-  //     // @v4 Reset the 'x' force to draw the bubbles to the center.
-  //     simulation.force('x', d3.forceX().strength(forceStrength).x(center.x));
-
-  //     // @v4 We can reset the alpha value and restart the simulation
-  //     simulation.alpha(1).restart();
-  //   }
-  // }
 
   //functionality for college button
   chart.toggleCollege = function () {
@@ -345,22 +374,35 @@ function bubbleChart() {
 
     colleges.enter().append('text')
       .attr('class', 'year')
-      .attr('x', function (d) { 
+      .attr('x', function (d) {
         return collegeTitles[d].x
       })
-      .attr('y', function (d) { 
+      .attr('y', function (d) {
         return collegeTitles[d].y
       })
       //.attr('text-anchor', 'middle')
-      .text(function (d) { 
-        return d; 
-      });
+      .text(function (d) {
+        return d;
+      })
+      .on("mouseover", function(d){
+        TooltipCollege
+        .html("<strong> Category: </strong>" + collegeTitles[d].category + "<strong> Description: </strong>" + collegeTitles[d].description +  '<a href= ' + collegeTitles[d].link + '>More Info</a>')
+        .transition().duration(500)
+            .style("opacity", 1)
+            .style("left", (d3.event.pageX +28) + "px")
+            .style("top", (d3.event.pageY ) + "px")
+      })
+      .on("mouseout", function(d){
+        TooltipCollege
+        .transition().duration(4000)
+        .style("opacity", 0)
+      })
 
     //FORCES TO MAKE THE BUBBLES SPLIT
     // @v4 Reset the 'x' force to draw the bubbles to their year centers
     simulation.force('x', d3.forceX().strength(forceStrength).x(nodeCollegePositionX))
     simulation.force('y', d3.forceY().strength(forceStrength).y(nodeCollegePositionY))
-    
+
 
     // @v4 We can reset the alpha value and restart the simulation
     simulation.alpha(1).restart()
@@ -381,7 +423,7 @@ function bubbleChart() {
     // @v4 We can reset the alpha value and restart the simulation
     simulation.alpha(1).restart();
   }
-  
+
   // return the chart function from closure.
   return chart;
 }
@@ -408,64 +450,25 @@ function display(error, data) {
 /*
  * Sets up the layout buttons to allow for toggling between view modes.
  */
-function setupButtons() {
-  d3.select('#toolbar')
-    .selectAll('.button')
-    .on('click', function () {
-      // Remove active class from all buttons
-      d3.selectAll('.button').classed('active', false);
-      // Find the button just clicked
-      var button = d3.select(this);
-
-      // Set it as the active button
-      button.classed('active', true);
-
-      // Get the id of the button
-      var buttonId = button.attr('id');
-
-      // Toggle the bubble chart based on the currently clicked button.
-      myBubbleChart.toggleDisplay(buttonId);
-    });
-}
-
-/*
- * Sets up the layout buttons to allow for toggling between view modes.
- */
 //allows for the button to be clicked and filter through the options
-function setupActualButtons(){
+function setupActualButtons() {
   d3.select('#college')
     .on('click', function () {
       console.log("You clicked college!")
-     
+
       myBubbleChart.toggleCollege()
-      
+
     });
-  
+
   d3.select('#combine')
     .on('click', function () {
       console.log("You clicked combine!")
-     
+
       myBubbleChart.toggleCombine()
-      
+
     });
 }
 
-// /*
-//  * Helper function to convert a number into a string
-//  * and add commas to it to improve presentation.
-//  */
-// function addCommas(nStr) {
-//   nStr += '';
-//   var x = nStr.split('.');
-//   var x1 = x[0];
-//   var x2 = x.length > 1 ? '.' + x[1] : '';
-//   var rgx = /(\d+)(\d{3})/;
-//   while (rgx.test(x1)) {
-//     x1 = x1.replace(rgx, '$1' + ',' + '$2');
-//   }
-
-//   return x1 + x2;
-// }
 
 // Load the data.
 d3.csv('data/charlotteData1.csv', display);
